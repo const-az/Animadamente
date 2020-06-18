@@ -66,6 +66,7 @@ export default new Vuex.Store({
         prod['qty'] = 1
         state.toys.push(prod)
       })
+      console.log(state.toys)
     },
     // EDIT
     TRUE_EDIT(state){
