@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <!-- TOYS LIST -->
+    <!-- DOLLS LIST -->
     <v-card flat>
       <!-- HEADER -->
       <v-card-title>
@@ -9,14 +9,14 @@
         <v-text-field v-model="search" append-icon="mdi-magnify" label="Búsqueda" single-line hide-details></v-text-field>
       </v-card-title>
       <!-- CONTENT -->
-      <v-data-table :headers="headers" :items="toys" :search="search" no-results-text="No existen productos registrados con esas características." no-data-text="No hay productos disponibles..." hide-default-footer>
+      <v-data-table :headers="headers" :items="dolls" :search="search" no-results-text="No existen productos registrados con esas características." no-data-text="No hay productos disponibles..." hide-default-footer>
         <!-- ACTION -->
         <template v-slot:item.image="{ item }">
           <v-img :src="item.data.img" aspect-ratio="1.7"></v-img>
         </template>
         <!-- ACTION -->
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editToy(item.id)">mdi-pencil</v-icon>
+          <v-icon small class="mr-2" @click="editDoll(item.id)">mdi-pencil</v-icon>
           <v-icon small @click="deleteConfirmation(item.id, item.data.name)">mdi-delete</v-icon>
         </template>
       </v-data-table>
@@ -28,7 +28,7 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  name: 'Toys',
+  name: 'Dolls',
   data() {
       return {
         search: '',
@@ -47,10 +47,10 @@ export default {
         ],
       }
     },
-    methods: mapActions(['updateEdit', 'editToy','deleteConfirmation']),
-    computed: mapState(['toys','edit']),
+    methods: mapActions(['updateEdit', 'editDoll','deleteConfirmation']),
+    computed: mapState(['dolls','edit']),
     mounted(){
-      this.$store.dispatch('getToys')
+      this.$store.dispatch('getDolls')
     },
   }
 </script>

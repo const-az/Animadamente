@@ -1,13 +1,7 @@
 <template>
   <v-main align="center">
     <!-- products LIST -->
-    <products-list></products-list>
-    <!-- ADD NEW PRODUCT BUTTON -->
-    <v-btn depressed color="cyan darken-2" class="mt-15" fab dark @click="displayToyform">
-      <v-icon dark>mdi-plus</v-icon>
-    </v-btn>
-    <!-- FORM -->
-    <products-form></products-form>
+    <cards-form></cards-form>
     <!-- LOADING -->
     <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -16,17 +10,14 @@
 </template>
 
 <script>
-import ProductsList from '../components/ProductsList'
-import ProductsForm from '../components/ProductsForm'
+import CardsForm from '../components/CardsForm'
 
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   components: {
-    ProductsList,
-    ProductsForm,
+    CardsForm,
   },
   computed: mapState(['loading']),
-  methods: mapActions(['displayToyform']),
 }
 </script>

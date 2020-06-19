@@ -23,7 +23,7 @@ export default {
     CartModal
   },
   created(){
-    this.$store.dispatch('getToys')
+    this.$store.dispatch('getDolls')
   }
 }
 </script>

@@ -3,27 +3,34 @@ import Vuex from 'vuex'
 import axios from 'axios'
 
 Vue.use(Vuex)
-// FORM FUNCTIONS
-function defaultToy(){
+
+// Empty doll function to reset currentDoll
+function defaultDoll(){
   return {
     id: null,
     data:{
       name: '',
-      stock: 0,
-      price: 0,
+      stock: null,
+      price: null,
       text: '',
       img: ''
     }
   }
 }
 
-// SHOPPING CART FUNCTIONS
+// Base URL for Firebase cloudfunctions
+const baseURL = 'https://us-central1-animadamente-73568.cloudfunctions.net/products'
+
+// SHOPPING CART FUNCTIONS:
+// Saves items on storage (like users and shopping cart items)
 function setInStorage(key, obj) {
   localStorage.setItem(key, JSON.stringify(obj))
 }
+// Gets items from storage (like users and shopping cart items)
 function getFromStorage(key) {
   return JSON.parse(localStorage.getItem(key))
 }
+// Calculates shopping cart total
 function getCartTotal(productsList) {
   let price = 0.0
   productsList.forEach(p => {
@@ -31,6 +38,7 @@ function getCartTotal(productsList) {
   })
   return price
 }
+// Sets shopping cart empty
 function newCart() {
   return {
     list: [],
@@ -38,211 +46,188 @@ function newCart() {
   }
 }
 
+// STORE
 export default new Vuex.Store({
   state: {
-    toys: [],
+    // All dolls
+    dolls: [],
+    // State toggles
     loading: false,
     edit: false,
-    showForm: false,
     messageModal: false,
-    currentToy: defaultToy(),
-    // User
+    // Saves temporarily new doll data or when editing one
+    currentDoll: defaultDoll(),
+    // Saves temporarily user info when logged-in
     currentUser: getFromStorage('user') || undefined,
-    // Cart
+    // Stocks information about shopping cart list items
     shoppingCart: getFromStorage('cart') || newCart(),
     showCart: false,
   },
   mutations: {
-    SHOW_LOADING(state){
-      state.loading = true
-    },
-    HIDE_LOADING(state){
-      state.loading = false
-    },
-    // TOYS
-    GET_TOYS(state, toys){
-      state.toys = []
-      toys.forEach( prod => {
+    // Toggles loading state
+    SHOW_LOADING(state){ state.loading = true},
+    HIDE_LOADING(state){ state.loading = false},
+    // Toggles edit state when editing or deleting a doll
+    TRUE_EDIT(state){ state.edit = true },
+    FALSE_EDIT(state){ state.edit = false },
+    // Toggles message modal states when deleting a doll
+    SHOW_MESSAGE_FORM(state){ state.messageModal = true },
+    HIDE_MESSAGE_FORM(state){ state.messageModal = false },
+    // Sets dolls into an state array and adds them a quantity default number
+    GET_DOLLS(state, dolls){
+      state.dolls = []
+      dolls.forEach( prod => {
         prod['qty'] = 1
-        state.toys.push(prod)
+        state.dolls.push(prod)
       })
-      console.log(state.toys)
     },
-    // EDIT
-    TRUE_EDIT(state){
-      state.edit = true
-    },
-    FALSE_EDIT(state){
-      state.edit = false
-    },
-    // MODAL
-    DISPLAY_TOY_FORM(state){
-      state.showForm = true
-    },
-    HIDE_TOY_FORM(state){
-      state.showForm = false
-    },
-    // RESET
-    RESET_CURRENT_TOY(state){
-      state.currentToy.id = null
-      const empty = defaultToy();
+    // Sets current doll info into state
+    SET_CURRENT_DOLL(state, doll){ state.currentDoll = doll },
+    // Resets current doll info into an empty object
+    RESET_CURRENT_DOLL(state){
+      state.currentDoll.id = null
+      const empty = defaultDoll();
       Object.keys(empty.data).forEach(key => {
-        state.currentToy.data[key] = empty.data[key]
+        state.currentDoll.data[key] = empty.data[key]
       });
     },
-    // UPDATE DATA
-    UPDATE_NAME(state, name){
-      state.currentToy.data.name = name
-    },
-    UPDATE_STOCK(state, stock){
-      state.currentToy.data.stock = stock
-    },
-    UPDATE_PRICE(state, price){
-      state.currentToy.data.price = price
-    },
-    UPDATE_TEXT(state, text){
-      state.currentToy.data.text = text
-    },
-    UPDATE_IMAGE(state, img){
-      state.currentToy.data.img = img
-    },
-    // MESSAGE MODAL
-    SHOW_MESSAGE_FORM(state){
-      state.messageModal = true
-    },
-    HIDE_MESSAGE_FORM(state){
-      state.messageModal = false
-    },
-    // User
+    // Updates doll info from inputs to state
+    UPDATE_NAME(state, name){ state.currentDoll.data.name = name },
+    UPDATE_STOCK(state, stock){ state.currentDoll.data.stock = stock },
+    UPDATE_PRICE(state, price){ state.currentDoll.data.price = price },
+    UPDATE_TEXT(state, text){ state.currentDoll.data.text = text },
+    UPDATE_IMAGE(state, img){ state.currentDoll.data.img = img },
+    // Updates user info into state and storage
     UPDATE_CURR_USER(state, user) {
       state.currentUser = user
       setInStorage('user', user)
     },
-    // Cart
+    // Adds item to cart when selected 
     ADD_TO_CART(state, product) {
-      // add def qty if not defined
+      // Adds default quantity if not defined
       if (product.qty === undefined ) { product['qty'] = 1 }
-      // increase qty if exists, else add to cart as new
+      // Increases quantity if product already exists on cart, else add to cart as new
       let pidx = state.shoppingCart.list.map(p => p.id).indexOf(product.id)
       if (pidx >= 0) {
         state.shoppingCart.list[pidx].qty++
       } else {
         state.shoppingCart.list.push(product)
       }
-      // update total price
+      // Updates total price
       state.shoppingCart.total = getCartTotal(state.shoppingCart.list)
-      // update in storage
+      // Updates cart on storage
       setInStorage('cart', state.shoppingCart)
     },
+    // Removes selected item from shopping cart
     REMOVE_FROM_CART(state, product_id) {
+      // Finds on cart doll by id
       let pidx = state.shoppingCart.list.map(p => p.id).indexOf(product_id)
       if (pidx >= 0) {
+        // Deletes selected item 
         state.shoppingCart.list.splice(pidx, 1)
-        // update total price
+        // Updates total price
         state.shoppingCart.total = getCartTotal(state.shoppingCart.list)
-        // update in storage
+        // Updates in storage
         setInStorage('cart', state.shoppingCart)
       } else {
         throw new Error("Product not found in cart")
       }
     },
+    // Resets shopping cart to empty
     CLEAR_CART(state) {
       state.shoppingCart = newCart()
-      // update in storage
+      // Updates in storage
       setInStorage('cart', state.shoppingCart)
     },
+    // Toggles shopping cart display
     UPDATE_SHOW_CART(state, value) {
       state.showCart = value
     },
   },
   actions: {
-    // CRUD
-    getToys({commit}){
+    // CRUD: interacting with Firebase
+    // Gets all dolls from Firebase
+    getDolls({commit}){
+      // Displays loading spinner while getting items
       commit('SHOW_LOADING')
-      axios.get('https://us-central1-animadamente-73568.cloudfunctions.net/products/products', { headers: { "Content-type": "text/plain"}})
+      axios.get(`${baseURL}/products`, { headers: { "Content-type": "text/plain"}})
       .then((accept) => {
+        // Saves info into state and hide spinner
         let data = accept.data
-        commit('GET_TOYS', data)
+        commit('GET_DOLLS', data)
         commit('HIDE_LOADING')
-        commit('RESET_CURRENT_TOY')
+        commit('RESET_CURRENT_DOLL')
       })
     },
-    postToy({dispatch, commit, state}){
-      if(state.currentToy.id!=null){
+    // Post a doll into Firebase
+    postDoll({dispatch, commit, state}){
+      // When editing values
+      if(state.currentDoll.id!=null){
         commit('SHOW_LOADING')
-        axios.put(`https://us-central1-animadamente-73568.cloudfunctions.net/products/product/${state.currentToy.id}`, state.currentToy.data, { headers:{'Context-type': 'application/json'} })
+        axios.put(`${baseURL}/product/${state.currentDoll.id}`, state.currentDoll.data, { headers:{'Context-type': 'application/json'} })
         .then(() => {
           commit('HIDE_LOADING')
-          dispatch('getToys')
+          dispatch('getDolls')
         })
       }else{
+        // When saving a new doll
         commit('SHOW_LOADING')
-        axios.post('https://us-central1-animadamente-73568.cloudfunctions.net/products/product', state.currentToy.data, { headers:{'Context-type': 'application/json'} })
+        axios.post(`${baseURL}/product`, state.currentDoll.data, { headers:{'Context-type': 'application/json'} })
         .then(() => {
           commit('HIDE_LOADING')
-          dispatch('getToys')
+          dispatch('getDolls')
         })
       }
     },
-    editToy({dispatch, commit, state}, id){
-      commit('SHOW_LOADING')
-      axios.get(`https://us-central1-animadamente-73568.cloudfunctions.net/products/product/${id}`, { headers:{'Context-type': 'application/json'} })
-      .then((response) => {
-        commit('HIDE_LOADING')
-        state.currentToy = response.data
-        dispatch('displayToyform')
-      })
+    // Gets info about selected doll for editing
+    editDoll({commit, getters}, id){
+      // When dolls already exists on storage
+      let targetDoll = getters.searchDollById(id)
+      if(targetDoll){
+        commit('SET_CURRENT_DOLL', targetDoll)
+      } else{
+        // When has to get it from Firebase
+        commit('SHOW_LOADING')
+        axios.get(`${baseURL}/product/${id}`, { headers:{'Context-type': 'application/json'} })
+        .then((response) => {
+          commit('HIDE_LOADING')
+          commit('SET_CURRENT_DOLL', response.data)
+        })
+      }
     },
+    // Ask for confirmation when deleting option selected
     deleteConfirmation({commit, state}, id, name){
-      state.currentToy.id = id
+      state.currentDoll.id = id
       commit('UPDATE_NAME', name)
       commit('SHOW_MESSAGE_FORM')
     },
-    deleteToy({commit, dispatch, state}){
+    // Deletes doll information from Firebase
+    deleteDoll({commit, dispatch, state}){
       commit('HIDE_MESSAGE_FORM')
       commit('SHOW_LOADING')
-       axios.delete(`https://us-central1-animadamente-73568.cloudfunctions.net/products/product/${state.currentToy.id}`, { headers:{'Context-type': 'application/json'} })
+       axios.delete(`${baseURL}/product/${state.currentDoll.id}`, { headers:{'Context-type': 'application/json'} })
         .then(() => {
           commit('TRUE_EDIT')
-          dispatch('getToys')
+          dispatch('getDolls')
           commit('HIDE_LOADING')
           commit('SHOW_MESSAGE_FORM')
         })
     },
+    // Closes informative message when doll is deleted
     closeMessage({commit}){
       commit('HIDE_MESSAGE_FORM')
       commit('FALSE_EDIT')
-      commit('RESET_CURRENT_TOY')
+      commit('RESET_CURRENT_DOLL')
     },
-    // UPDATING DATA
-    updateName({commit}, name){
-      commit('UPDATE_NAME', name)
-    },
-    updateStock({commit}, stock){
-      commit('UPDATE_STOCK', stock)
-    },
-    updatePrice({commit}, price){
-      commit('UPDATE_PRICE', price)
-    },
-    updateText({commit}, text){
-      commit('UPDATE_TEXT', text)
-    },
-    updateImage({commit}, img){
-      commit('UPDATE_IMAGE', img)
-    },
-    // MODAL
-    displayToyform({commit}){
-      commit('DISPLAY_TOY_FORM')
-    },
-    hideToyform({commit}){
-      commit('HIDE_TOY_FORM')
-    },
-    hideEmptyToyform({commit}){
-      commit('HIDE_TOY_FORM')
-      commit('RESET_CURRENT_TOY')
-    },
-    // User
-    updateUser ({commit}, user) {
+    // Updates data from inputs to state
+    updateName({commit}, name){ commit('UPDATE_NAME', name) },
+    updateStock({commit}, stock){ commit('UPDATE_STOCK', stock) },
+    updatePrice({commit}, price){ commit('UPDATE_PRICE', price) },
+    updateText({commit}, text){ commit('UPDATE_TEXT', text) },
+    updateImage({commit}, img){ commit('UPDATE_IMAGE', img) },
+    EmptyDollform({commit}){ commit('RESET_CURRENT_DOLL') },
+    // Updates user from state
+    updateUser({commit}, user){
       return new Promise((resolve, reject) => {
         try{ 
           commit('UPDATE_CURR_USER', user)
@@ -250,7 +235,8 @@ export default new Vuex.Store({
         } catch(e) { reject(e) }
       })
     },
-    addToCart ({commit}, product) {
+    // Adds selected items to cart
+    addToCart({commit}, product){
       return new Promise((resolve, reject) => {
         try {
           commit('ADD_TO_CART', product)
@@ -258,7 +244,8 @@ export default new Vuex.Store({
         } catch(e) { reject(e) }
       })
     },
-    removeFromCart ({commit}, product_id) {
+    // Removes selected items from cart
+    removeFromCart({commit}, product_id){
       return new Promise((resolve, reject) => {
         try {
           commit('REMOVE_FROM_CART', product_id)
@@ -266,7 +253,8 @@ export default new Vuex.Store({
         } catch(e) { reject(e) }
       })
     },
-    clearCart ({commit}) {
+    // Resets cart into empty
+    clearCart({commit}){
       return new Promise((resolve, reject) => {
         try {
           commit('CLEAR_CART')
@@ -274,8 +262,8 @@ export default new Vuex.Store({
         } catch(e) { reject(e) }
       })
     },
+    // Toggles and updates shopping cart modal state
     updateShowCart({commit}, val) {
-      console.log('setting showCart to ', val)
       return new Promise((resolve, reject) => {
         try {
           commit('UPDATE_SHOW_CART', !!val) // !! double-negation for Boolen casting
@@ -285,11 +273,17 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    // User
+    // Gets log-in state from storage
     isLoggedIn: state => !!state.currentUser,
+    // Gets current logged-in user from storage 
     currentUser: state => state.currentUser,
-    // Cart
+    // Gets shopping cart items from storage
     shoppingCart: state => state.shoppingCart,
+    // Gets shopping cart display state from storage
     showCart: state => state.showCart,
+    // Searches doll by id on storage when editing
+    searchDollById: (state) => (id) => {
+      return state.dolls.find(doll => doll.id === id)
+    }
   }
 })

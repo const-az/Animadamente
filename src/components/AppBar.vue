@@ -1,17 +1,23 @@
 <template>
   <div>
     <!-- AppBar -->
-    <v-app-bar color="white" dense flat class="mx-8">
+    <v-app-bar color="white" dense flat>
       <!-- Brand redirects to home -->
       <router-link to="/" class="text-decoration-none grey--text text--darken-2">
-        <v-toolbar-title>Animadamente</v-toolbar-title>
+        <v-toolbar-title>
+          Animadamente
+          <v-icon x-small class="mr-1" color="pink lighten-3">mdi-brightness-1</v-icon>
+          <v-icon x-small class="mr-1" color="cyan lighten-3">mdi-brightness-1</v-icon>
+          <v-icon x-small class="mr-1" color="yellow lighten-1">mdi-brightness-1</v-icon>
+          <v-icon x-small color="light-green lighten-2">mdi-brightness-1</v-icon>
+        </v-toolbar-title>
       </router-link>
       <v-spacer></v-spacer>
       <!-- Shopping cart -->
       <v-btn depressed fab color="white" data-testId='cart' @click="showCart">
         <v-badge :content="$store.getters.shoppingCart.list.length"
           :value="$store.getters.shoppingCart.list.length > 0 ? $store.getters.shoppingCart.list.length : ''"
-          color="pink" overlap>
+          color="cyan lighten-3" overlap>
           <v-icon medium class="mr-3" color="grey darken-2">mdi-cart</v-icon>
         </v-badge>
       </v-btn>
