@@ -6,13 +6,18 @@
       <v-col cols="12" sm="6" md="4">
         <v-card outlined class="rounded-xl">
           <!-- Product image preview -->
-          <v-img class="white--text align-end" height="250px" :src="!!currentDoll.id ? currentDoll.data.img : '' ">
+          <v-img class="white--text align-end" height="250px" :src="temporaryUrl!='' ? temporaryUrl : currentDoll.data.img">
             <!-- Title: describes if you're adding or editing a product -->
             <v-card-title class="mb-0 text-h5 font-weight-b">{{ !!currentDoll.id ? 'Editar producto' : 'Agregar producto' }}</v-card-title>
           </v-img>
           <!-- Product description -->
           <v-card-text class="text--primary pa-5">
             <v-row>
+              <!-- Product sku -->
+              <v-col cols="12" sm="6">
+                <v-text-field :value="currentDoll.data.sku" label="SKU" @input="updateSKU" :disabled="!!currentDoll.id"></v-text-field>
+                <small>{{inputError}}</small>
+              </v-col>
               <!-- Product name -->
               <v-col cols="12" sm="6">
                 <v-text-field :value="currentDoll.data.name" label="Nombre" @input="updateName"></v-text-field>
@@ -31,7 +36,10 @@
               </v-col>
               <!-- Product image -->
               <v-col cols="12" sm="12">
-                <v-text-field :value="currentDoll.data.img" label="Imagen" @input="updateImage"></v-text-field>
+                <input type="file" ref="searchImage" class="d-none" @change="selectImage($event)">
+                <v-btn color="cyan darken-2" small outlined rounded @click="$refs.searchImage.click()">Buscar imagen</v-btn>
+                <!-- <v-btn color="cyan darken-2" small outlined rounded v-else>Subir imagen</v-btn> -->
+                <!-- <v-text-field :value="currentDoll.data.img" label="Imagen" @input="updateImage"></v-text-field> -->
               </v-col>
             </v-row>
           </v-card-text>
@@ -39,7 +47,7 @@
           <v-card-actions class="pa-5">
             <v-spacer></v-spacer>
             <v-btn color="cyan darken-2" small outlined rounded @click="emptyDollform">Cancelar</v-btn>
-            <v-btn color="cyan darken-2" small depressed rounded dark @click="postDoll">{{ !!currentDoll.id ? 'Actualizar' : 'Crear'}}</v-btn>
+            <v-btn color="cyan darken-2" small depressed rounded dark @click="sendForm">{{ !!currentDoll.id ? 'Actualizar' : 'Crear'}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -81,9 +89,33 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  methods: mapActions(['updateEdit', 'editDoll','deleteConfirmation','updateName', 'updateStock', 'updatePrice', 'updateText', 'updateImage', 'postDoll','emptyDollform']),
+  data(){
+    return{
+      file: null,
+      temporaryUrl: ''
+    }
+  },
+  methods: {
+    ...mapActions(['updateEdit', 'editDoll','deleteConfirmation', 'updateSKU', 'updateName', 'updateStock', 'updatePrice', 'updateText', 'updateImage', 'postDoll','emptyDollform','updateTemporaryImageFile']),
+    // Selects image from local storage and saves it 
+    selectImage(event){
+      this.file = event.target.files[0]
+
+      const reader = new FileReader()
+      reader.readAsDataURL(this.file)
+      reader.onload = (e) => {
+        this.temporaryUrl = e.target.result
+        this.updateTemporaryImageFile(this.file)
+      }
+    },
+    sendForm(){
+      this.postDoll()
+      this.file = null,
+      this.temporaryUrl = ''
+    }
+  },
   computed: {
-    ...mapState(['dolls','edit','currentDoll']),
+    ...mapState(['dolls','edit','currentDoll', 'inputError']),
     // Returns data
     computedProductList(){
       return this.dolls

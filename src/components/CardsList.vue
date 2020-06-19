@@ -1,5 +1,6 @@
 <template>
   <v-row class="mt-8">
+    <!-- CARDS LIST FOR HOME PAGE -->
     <!-- Creates cards for every doll -->
     <v-col cols="12" sm="6" md="4" v-for="item in computedProductList" :key="item.id">
       <!-- Card -->

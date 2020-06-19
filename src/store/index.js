@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import Firebase from 'firebase'
 
 Vue.use(Vuex)
 
@@ -9,6 +10,7 @@ function defaultDoll(){
   return {
     id: null,
     data:{
+      sku: '',
       name: '',
       stock: null,
       price: null,
@@ -51,6 +53,7 @@ export default new Vuex.Store({
   state: {
     // All dolls
     dolls: [],
+    temporaryImageFile: null, 
     // State toggles
     loading: false,
     edit: false,
@@ -62,6 +65,8 @@ export default new Vuex.Store({
     // Stocks information about shopping cart list items
     shoppingCart: getFromStorage('cart') || newCart(),
     showCart: false,
+    // Errors
+    inputError: ''
   },
   mutations: {
     // Toggles loading state
@@ -97,6 +102,9 @@ export default new Vuex.Store({
     UPDATE_PRICE(state, price){ state.currentDoll.data.price = price },
     UPDATE_TEXT(state, text){ state.currentDoll.data.text = text },
     UPDATE_IMAGE(state, img){ state.currentDoll.data.img = img },
+    UPDATE_SKU(state, sku){ state.currentDoll.data.sku = sku },
+    // Updates temporary image file from input
+    UPDATE_TEMPORARY_FILE(state, file){ state.temporaryImageFile = file },
     // Updates user info into state and storage
     UPDATE_CURR_USER(state, user) {
       state.currentUser = user
@@ -159,25 +167,39 @@ export default new Vuex.Store({
         commit('RESET_CURRENT_DOLL')
       })
     },
-    // Post a doll into Firebase
-    postDoll({dispatch, commit, state}){
-      // When editing values
-      if(state.currentDoll.id!=null){
-        commit('SHOW_LOADING')
-        axios.put(`${baseURL}/product/${state.currentDoll.id}`, state.currentDoll.data, { headers:{'Context-type': 'application/json'} })
-        .then(() => {
-          commit('HIDE_LOADING')
-          dispatch('getDolls')
-        })
-      }else{
-        // When saving a new doll
-        commit('SHOW_LOADING')
-        axios.post(`${baseURL}/product`, state.currentDoll.data, { headers:{'Context-type': 'application/json'} })
-        .then(() => {
-          commit('HIDE_LOADING')
-          dispatch('getDolls')
-        })
+    // Uploads image to Firebase Storage
+    async uploadImage({state, dispatch}){
+      try {
+        // Creates file on Firebase Storage (image name equals sku product code)
+        const refImage = Firebase.storage().ref().child('ProductImages').child(state.currentDoll.data.sku)
+        // Uploads file
+        await refImage.put(state.temporaryImageFile)
+        // Gets image url
+        const downloadUrl = await refImage.getDownloadURL()
+        // Sets image url in currentDoll
+        dispatch('updateImage', downloadUrl)
+      } catch (error) {
+        console.log(error)
       }
+    },
+    // Post a doll into Firebase
+    async postDoll({dispatch, commit, state}){
+      commit('SHOW_LOADING')
+      // Upload picture into Firebase storage and saves url into currentDoll
+      await dispatch('uploadImage')
+      .then( async () => {
+        // If editing
+        if(state.currentDoll.id!=null){
+          await axios.put(`${baseURL}/product/${state.currentDoll.id}`, state.currentDoll.data)
+        }else{
+          // If it's a new doll
+          await axios.post(`${baseURL}/product`, state.currentDoll.data )
+        }
+      })
+      .finally(() => {
+        commit('HIDE_LOADING')
+        dispatch('getDolls')
+      })
     },
     // Gets info about selected doll for editing
     editDoll({commit, getters}, id){
@@ -225,6 +247,18 @@ export default new Vuex.Store({
     updatePrice({commit}, price){ commit('UPDATE_PRICE', price) },
     updateText({commit}, text){ commit('UPDATE_TEXT', text) },
     updateImage({commit}, img){ commit('UPDATE_IMAGE', img) },
+    updateSKU({commit, getters, state}, newsku){
+      let targetSKU = getters.searchDollBySKU(newsku)
+      if(targetSKU){
+        state.inputError = 'sku no disponible'
+      }else{
+        commit('UPDATE_SKU', newsku)
+        state.inputError = ''
+      } 
+    },
+    // Updates temporary image file from input
+    updateTemporaryImageFile({commit}, file){ commit('UPDATE_TEMPORARY_FILE', file) },
+    // Resets form inputs when not saved
     EmptyDollform({commit}){ commit('RESET_CURRENT_DOLL') },
     // Updates user from state
     updateUser({commit}, user){
@@ -284,6 +318,10 @@ export default new Vuex.Store({
     // Searches doll by id on storage when editing
     searchDollById: (state) => (id) => {
       return state.dolls.find(doll => doll.id === id)
+    },
+    // Searches doll by id on storage when editing
+    searchDollBySKU: (state) => (sku) => {
+      return state.dolls.find(doll => doll.data.sku === sku)
     }
   }
 })
