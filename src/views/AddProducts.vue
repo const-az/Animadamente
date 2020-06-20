@@ -1,7 +1,11 @@
 <template>
   <v-main align="center">
     <!-- products LIST -->
-    <cards-form></cards-form>
+    <v-container>
+      <card-form></card-form>
+      <v-divider class="mb-5"></v-divider>
+      <edit-cards></edit-cards>
+    </v-container>
     <!-- LOADING -->
     <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -10,13 +14,15 @@
 </template>
 
 <script>
-import CardsForm from '../components/CardsForm'
+import CardForm from '../components/CardForm'
+import EditCards from '../components/EditCards'
 
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    CardsForm,
+    CardForm,
+    EditCards
   },
   computed: mapState(['loading']),
 }

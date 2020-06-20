@@ -8,7 +8,7 @@
         <!-- Product image -->
         <v-img class="white--text align-end" height="250px" :src="item.data.img">
           <!-- Product name -->
-          <v-card-title class="mb-0 text-h5 font-weight-b">{{item.data.name}}</v-card-title>
+          <v-card-title class="mb-0 text-h5 font-weight-bold">{{item.data.name}}</v-card-title>
           <!-- Product price -->
           <v-card-subtitle class="white--text text-h6 font-weight-bold">$ {{ item.data.price }}</v-card-subtitle>
         </v-img>

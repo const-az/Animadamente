@@ -15,8 +15,9 @@ Vue.use(VueRouter)
     component: Home
   },
   {
-    path: '/about',
+    path: '/acerca',
     name: 'About',
+    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
     path: '/agregarproductos',

@@ -49,12 +49,10 @@
           <!-- Only if is logged in -->
           <div v-else>
             <!-- Add products -->
-            <v-list-item link>
-              <router-link to="/agregarproductos">
-                <v-list-item-title>
-                  Añadir productos
-                </v-list-item-title>
-              </router-link>
+            <v-list-item link to="/agregarproductos">
+              <v-list-item-title>
+                Añadir productos
+              </v-list-item-title>
             </v-list-item>
             <!-- Logout -->
             <v-list-item link @click="logout">
@@ -82,7 +80,7 @@ export default {
     },
     logout() {
       Firebase.auth().signOut().then( () => {
-        this.$router.push('/home')
+        this.$router.push('/')
         this.$store.dispatch('updateUser', false)
         this.displayMenu = false
       })

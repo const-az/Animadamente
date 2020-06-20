@@ -70,8 +70,8 @@ export default new Vuex.Store({
   },
   mutations: {
     // Toggles loading state
-    SHOW_LOADING(state){ state.loading = true},
-    HIDE_LOADING(state){ state.loading = false},
+    SHOW_LOADING(state){ state.loading = true },
+    HIDE_LOADING(state){ state.loading = false },
     // Toggles edit state when editing or deleting a doll
     TRUE_EDIT(state){ state.edit = true },
     FALSE_EDIT(state){ state.edit = false },
@@ -168,8 +168,9 @@ export default new Vuex.Store({
       })
     },
     // Uploads image to Firebase Storage
-    async uploadImage({state, dispatch}){
+    async uploadImage({state, dispatch, commit}){
       try {
+        commit('SHOW_LOADING')
         // Creates file on Firebase Storage (image name equals sku product code)
         const refImage = Firebase.storage().ref().child('ProductImages').child(state.currentDoll.data.sku)
         // Uploads file
@@ -177,45 +178,41 @@ export default new Vuex.Store({
         // Gets image url
         const downloadUrl = await refImage.getDownloadURL()
         // Sets image url in currentDoll
-        dispatch('updateImage', downloadUrl)
+        await dispatch('updateImage', downloadUrl)
+        // Posts or updates a doll into Firebase
+        dispatch('postDoll')
       } catch (error) {
         console.log(error)
       }
     },
     // Post a doll into Firebase
-    async postDoll({dispatch, commit, state}){
-      commit('SHOW_LOADING')
-      // Upload picture into Firebase storage and saves url into currentDoll
-      await dispatch('uploadImage')
-      .then( async () => {
-        // If editing
-        if(state.currentDoll.id!=null){
-          await axios.put(`${baseURL}/product/${state.currentDoll.id}`, state.currentDoll.data)
-        }else{
-          // If it's a new doll
-          await axios.post(`${baseURL}/product`, state.currentDoll.data )
-        }
-      })
-      .finally(() => {
-        commit('HIDE_LOADING')
-        dispatch('getDolls')
-      })
-    },
-    // Gets info about selected doll for editing
-    editDoll({commit, getters}, id){
-      // When dolls already exists on storage
-      let targetDoll = getters.searchDollById(id)
-      if(targetDoll){
-        commit('SET_CURRENT_DOLL', targetDoll)
-      } else{
-        // When has to get it from Firebase
-        commit('SHOW_LOADING')
-        axios.get(`${baseURL}/product/${id}`, { headers:{'Context-type': 'application/json'} })
-        .then((response) => {
+    postDoll({dispatch, commit, state}){
+      // If editing
+      if(state.currentDoll.id!=null){
+        axios.put(`${baseURL}/product/${state.currentDoll.id}`, state.currentDoll.data)
+        .then(() => {
           commit('HIDE_LOADING')
-          commit('SET_CURRENT_DOLL', response.data)
+          dispatch('getDolls')
+        })
+      }else{
+        // If it's a new doll
+        axios.post(`${baseURL}/product`, state.currentDoll.data )
+        .then(() => {
+          commit('HIDE_LOADING')
+          dispatch('getDolls')
         })
       }
+
+    },
+    // Gets info about selected doll for editing
+    editDoll({commit}, id){
+      // When has to get it from Firebase
+      commit('SHOW_LOADING')
+      axios.get(`${baseURL}/product/${id}`, { headers:{'Context-type': 'application/json'} })
+      .then((response) => {
+        commit('HIDE_LOADING')
+        commit('SET_CURRENT_DOLL', response.data)
+      })
     },
     // Ask for confirmation when deleting option selected
     deleteConfirmation({commit, state}, id, name){
@@ -250,7 +247,7 @@ export default new Vuex.Store({
     updateSKU({commit, getters, state}, newsku){
       let targetSKU = getters.searchDollBySKU(newsku)
       if(targetSKU){
-        state.inputError = 'sku no disponible'
+        state.inputError = '* SKU no disponible.'
       }else{
         commit('UPDATE_SKU', newsku)
         state.inputError = ''
@@ -259,7 +256,10 @@ export default new Vuex.Store({
     // Updates temporary image file from input
     updateTemporaryImageFile({commit}, file){ commit('UPDATE_TEMPORARY_FILE', file) },
     // Resets form inputs when not saved
-    EmptyDollform({commit}){ commit('RESET_CURRENT_DOLL') },
+    emptyDollform({commit}){ 
+      commit('RESET_CURRENT_DOLL')
+      commit('UPDATE_TEMPORARY_FILE', null)
+    },
     // Updates user from state
     updateUser({commit}, user){
       return new Promise((resolve, reject) => {
