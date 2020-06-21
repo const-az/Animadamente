@@ -18,13 +18,13 @@
       <!-- Log-in form -->
       <v-card-text>
         <v-form>
-          <v-text-field color="cyan lighten-2" label="Usuario" prepend-icon="mdi-account" v-model="credentials.email"/>
-          <v-text-field color="cyan lighten-2" :type="showPassword ? 'text' : 'password'" label="Contraseña" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword" v-model="credentials.password"/>
+          <v-text-field data-testId="credentials-user" color="cyan lighten-2" label="Usuario" prepend-icon="mdi-account" v-model="credentials.email"/>
+          <v-text-field data-testId="credentials-password" color="cyan lighten-2" :type="showPassword ? 'text' : 'password'" label="Contraseña" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword" v-model="credentials.password"/>
         </v-form>
       </v-card-text>
       <!-- Send form -->
       <v-card-actions>
-        <v-btn depressed rounded outlined small dark class="mx-auto mt-5" color="pink lighten-2" @click="login">Iniciar sesión</v-btn>
+        <v-btn data-testId="send-login" depressed rounded outlined small dark class="mx-auto mt-5" color="pink lighten-2" @click="login">Iniciar sesión</v-btn>
       </v-card-actions>
     </v-card>
   </v-main>

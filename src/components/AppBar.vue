@@ -26,12 +26,12 @@
       <v-menu rounded open-on-hover close-on-content-click close-on-click> 
         <!-- Button activator  -->
         <template v-slot:activator="{ attrs, on }">
-          <v-btn class="grey--text text--darken-2" icon v-bind="attrs" v-on="on" depressed>
+          <v-btn data-testId='menu-activator' class="grey--text text--darken-2" icon v-bind="attrs" v-on="on" depressed>
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
         <!-- Dropdown list items -->
-        <v-list flat elevation="0">
+        <v-list flat elevation="0" data-testId='menu'>
           <!-- Shopping cart on small devices -->
           <v-list-item  @click="showCart" class="d-md-none">
             <v-list-item-title class="pr-5">
