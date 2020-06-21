@@ -5,7 +5,7 @@
       <!-- Brand redirects to home -->
       <router-link to="/home" class="text-decoration-none grey--text text--darken-2">
         <v-toolbar-title>
-          Animadamente
+          <span class="d-none d-md-inline mr-2">Animadamente</span>
           <v-icon x-small class="mr-1" color="pink lighten-3">mdi-brightness-1</v-icon>
           <v-icon x-small class="mr-1" color="cyan lighten-3">mdi-brightness-1</v-icon>
           <v-icon x-small class="mr-1" color="yellow lighten-1">mdi-brightness-1</v-icon>
