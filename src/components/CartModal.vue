@@ -16,7 +16,7 @@
         </v-btn>
       </v-card-actions>
       <!-- Header -->
-      <v-card-title class="justify-center">
+      <v-card-title class="justify-center pt-0">
         <!-- Modal title: depending on if cart is empty or not -->
         <span class="mb-4">{{ $store.getters.shoppingCart.list!='' ? 'Tus productos:' : 'Carrito vacío.' }}</span>
       </v-card-title>

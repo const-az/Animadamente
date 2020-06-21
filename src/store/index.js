@@ -68,7 +68,9 @@ export default new Vuex.Store({
     shoppingCart: getFromStorage('cart') || newCart(),
     showCart: false,
     // SKU error
-    inputError: ''
+    inputError: '',
+    // Search form on home
+    search: ''
   },
   mutations: {
     // Toggles loading state
@@ -110,6 +112,8 @@ export default new Vuex.Store({
     UPDATE_TEXT(state, text){ state.currentDoll.data.text = text },
     UPDATE_IMAGE(state, img){ state.currentDoll.data.img = img },
     UPDATE_SKU(state, sku){ state.currentDoll.data.sku = sku },
+    // Updates search bar
+    UPDATE_SEARCH(state, search){ state.search = search },
     // Updates temporary image file from input
     UPDATE_TEMPORARY_FILE(state, file){ state.temporaryImageFile = file },
     // Updates user info into state and storage
@@ -211,8 +215,13 @@ export default new Vuex.Store({
       }
 
     },
+    // Smooth scrolling when edit button click
+    scrollToTop() {
+      window.scrollTo({top: 0, behavior: 'smooth'})
+    },
     // Gets info about selected doll for editing
-    editDoll({commit}, id){
+    editDoll({commit, dispatch}, id){
+      dispatch('scrollToTop')
       // When has to get it from Firebase
       commit('SHOW_LOADING')
       axios.get(`${baseURL}/product/${id}`, { headers:{'Context-type': 'application/json'} })
@@ -261,6 +270,8 @@ export default new Vuex.Store({
         state.inputError = ''
       } 
     },
+    // Updates search from home to state
+    updateSearch({commit}, search){ commit('UPDATE_SEARCH', search) },
     // Updates temporary image file from input
     updateTemporaryImageFile({commit}, file){ commit('UPDATE_TEMPORARY_FILE', file) },
     // Resets form inputs when not saved

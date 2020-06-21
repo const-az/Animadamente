@@ -1,4 +1,4 @@
-# animadamante
+# animadamente
 
 ## Project setup
 ```

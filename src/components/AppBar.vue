@@ -34,7 +34,7 @@
         <v-list flat elevation="0">
           <!-- Shopping cart on small devices -->
           <v-list-item  @click="showCart" class="d-md-none">
-            <v-list-item-title>
+            <v-list-item-title class="pr-5">
               Ver carrito
                 <v-badge data-testId='cart' :content="$store.getters.shoppingCart.list.length"
                   :value="$store.getters.shoppingCart.list.length > 0 ? $store.getters.shoppingCart.list.length : ''"
@@ -92,9 +92,12 @@ export default {
     },
     logout() {
       Firebase.auth().signOut().then( () => {
-        this.$router.push('/')
+        // Clears cart and user when sign out
+        this.$store.dispatch('clearCart')
         this.$store.dispatch('updateUser', false)
-        this.displayMenu = false
+        if(window.location.pathname != '/'){
+          this.$router.push('/')
+        }
       })
     }
   },

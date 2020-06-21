@@ -9,7 +9,7 @@
       <edit-cards></edit-cards>
     </v-container>
     <!-- Loading -->
-    <v-overlay :value="loading" color="pink lighten-5" opacity="0.5">
+    <v-overlay :value="loading" color="pink lighten-5" opacity="0.3">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <!-- Delete confirmation dialog -->

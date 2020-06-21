@@ -13,7 +13,7 @@
           <v-card-subtitle class="white--text text-h6 font-weight-bold">$ {{ item.data.price }}</v-card-subtitle>
         </v-img>
         <!-- Product description -->
-        <v-card-text class="text--primary">
+        <v-card-text class="text--primary text-caption">
           {{item.data.text}}
         </v-card-text>
         <!-- Action buttons -->
@@ -45,11 +45,6 @@
 import { mapState } from 'vuex'
 
 export default {
-  data(){
-    return {
-      search: '',
-    }
-  },
   methods: {
     // Increases quantity of every product
     incrQty(id) {
@@ -75,7 +70,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['dolls']),
+    ...mapState(['dolls', 'search']),
     // Returns data
     computedProductList(){
       return this.dolls.filter(p => {

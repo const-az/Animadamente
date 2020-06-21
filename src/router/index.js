@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import AddProducts from '../views/AddProducts.vue'
-import Login from '../views/Login.vue'
 import Firebase from 'firebase'
 
 Vue.use(VueRouter)
@@ -22,7 +20,7 @@ Vue.use(VueRouter)
   {
     path: '/agregarproductos',
     name: 'AddProducts',
-    component: AddProducts,
+    component: () => import(/* webpackChunkName: "addproducts" */ '../views/AddProducts.vue'),
     meta: {
       login: true
     }
@@ -30,9 +28,13 @@ Vue.use(VueRouter)
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+  },
+  {
+    path: '*',
+    name: 'NotFound',
+    component: () => import(/* webpackChunkName: "notfound" */ '../views/NotFound.vue')
   }
-
 ]
 
 const router = new VueRouter({
