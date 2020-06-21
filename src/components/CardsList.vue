@@ -6,7 +6,7 @@
       <!-- Card -->
       <v-card outlined class="rounded-xl">
         <!-- Product image -->
-        <v-img class="white--text align-end" height="250px" :src="item.data.img">
+        <v-img class="white--text align-end" height="250px" :src="item.data.img" gradient="to top, rgba(0,0,0,.2), rgba(255,255,255,0)">
           <!-- Product name -->
           <v-card-title class="mb-0 text-h5 font-weight-bold">{{item.data.name}}</v-card-title>
           <!-- Product price -->
@@ -31,7 +31,7 @@
           </v-btn>
           <v-spacer></v-spacer>
         <!-- Add to cart -->
-          <span v-if="item.qty!=1" class="text-caption">Subtotal: $ {{ item.data.price * item.qty }}</span>
+          <span v-if="item.qty!=1" class="text-body-2"><span class="text-caption">Total:</span> $ {{ item.data.price * item.qty }}</span>
           <v-btn class="ma-2 align-right" outlined large color="cyan lighten-2" icon @click="addToCart(item)">
             <v-icon>mdi-cart</v-icon>
           </v-btn>

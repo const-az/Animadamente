@@ -60,12 +60,14 @@ export default new Vuex.Store({
     messageModal: false,
     // Saves temporarily new doll data or when editing one
     currentDoll: defaultDoll(),
+    // Saves temporarily doll information for deleting
+    deletingDoll: { id: null, name: ""},
     // Saves temporarily user info when logged-in
     currentUser: getFromStorage('user') || undefined,
     // Stocks information about shopping cart list items
     shoppingCart: getFromStorage('cart') || newCart(),
     showCart: false,
-    // Errors
+    // SKU error
     inputError: ''
   },
   mutations: {
@@ -96,6 +98,11 @@ export default new Vuex.Store({
         state.currentDoll.data[key] = empty.data[key]
       });
     },
+    // Resets deleting doll object
+    RESET_DELETING_DOLL(state){
+      state.deletingDoll.id = null
+      state.deletingDoll.name = ""
+    }, 
     // Updates doll info from inputs to state
     UPDATE_NAME(state, name){ state.currentDoll.data.name = name },
     UPDATE_STOCK(state, stock){ state.currentDoll.data.stock = stock },
@@ -215,28 +222,29 @@ export default new Vuex.Store({
       })
     },
     // Ask for confirmation when deleting option selected
-    deleteConfirmation({commit, state}, id, name){
-      state.currentDoll.id = id
-      commit('UPDATE_NAME', name)
+    deleteConfirmation({commit, state}, doll){
+      state.deletingDoll.id = doll.id
+      state.deletingDoll.name = doll.data.name
       commit('SHOW_MESSAGE_FORM')
     },
     // Deletes doll information from Firebase
     deleteDoll({commit, dispatch, state}){
       commit('HIDE_MESSAGE_FORM')
       commit('SHOW_LOADING')
-       axios.delete(`${baseURL}/product/${state.currentDoll.id}`, { headers:{'Context-type': 'application/json'} })
+       axios.delete(`${baseURL}/product/${state.deletingDoll.id}`, { headers:{'Context-type': 'application/json'} })
         .then(() => {
           commit('TRUE_EDIT')
           dispatch('getDolls')
           commit('HIDE_LOADING')
           commit('SHOW_MESSAGE_FORM')
+          commit('RESET_DELETING_DOLL')
         })
     },
     // Closes informative message when doll is deleted
     closeMessage({commit}){
       commit('HIDE_MESSAGE_FORM')
       commit('FALSE_EDIT')
-      commit('RESET_CURRENT_DOLL')
+      commit('RESET_DELETING_DOLL')
     },
     // Updates data from inputs to state
     updateName({commit}, name){ commit('UPDATE_NAME', name) },

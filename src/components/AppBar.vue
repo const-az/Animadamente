@@ -14,7 +14,8 @@
       </router-link>
       <v-spacer></v-spacer>
       <!-- Shopping cart -->
-      <v-btn depressed fab color="white" data-testId='cart' @click="showCart">
+      <v-btn class="d-none d-md-block" depressed fab color="white" data-testId='cart' @click="showCart">
+        <!-- Shopping cart icon -->
         <v-badge :content="$store.getters.shoppingCart.list.length"
           :value="$store.getters.shoppingCart.list.length > 0 ? $store.getters.shoppingCart.list.length : ''"
           color="cyan lighten-3" overlap>
@@ -22,7 +23,7 @@
         </v-badge>
       </v-btn>
       <!-- Dropdown menu -->
-      <v-menu rounded flat open-on-hover> 
+      <v-menu rounded open-on-hover close-on-content-click close-on-click> 
         <!-- Button activator  -->
         <template v-slot:activator="{ attrs, on }">
           <v-btn class="grey--text text--darken-2" icon v-bind="attrs" v-on="on" depressed>
@@ -30,7 +31,18 @@
           </v-btn>
         </template>
         <!-- Dropdown list items -->
-        <v-list>
+        <v-list flat elevation="0">
+          <!-- Shopping cart on small devices -->
+          <v-list-item  @click="showCart" class="d-md-none">
+            <v-list-item-title>
+              Ver carrito
+                <v-badge data-testId='cart' :content="$store.getters.shoppingCart.list.length"
+                  :value="$store.getters.shoppingCart.list.length > 0 ? $store.getters.shoppingCart.list.length : ''"
+                  color="cyan lighten-3" overlap>
+                  <v-icon medium class="mx-1" color="grey darken-2">mdi-cart</v-icon>
+                </v-badge>
+            </v-list-item-title>
+          </v-list-item>
           <!-- About -->
           <v-list-item link to="/acerca">
             <v-list-item-title>
