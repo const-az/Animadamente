@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- AppBar -->
-    <v-app-bar color="white" dense flat>
+    <v-app-bar color="white" dense flat data-testId='app-bar'>
       <!-- Brand redirects to home -->
-      <router-link to="/" class="text-decoration-none grey--text text--darken-2">
+      <router-link to="/home" class="text-decoration-none grey--text text--darken-2">
         <v-toolbar-title>
           Animadamente
           <v-icon x-small class="mr-1" color="pink lighten-3">mdi-brightness-1</v-icon>
@@ -36,7 +36,7 @@
           <v-list-item  @click="showCart" class="d-md-none">
             <v-list-item-title class="pr-5">
               Ver carrito
-                <v-badge data-testId='cart' :content="$store.getters.shoppingCart.list.length"
+                <v-badge data-testId='cart-small-devices' :content="$store.getters.shoppingCart.list.length"
                   :value="$store.getters.shoppingCart.list.length > 0 ? $store.getters.shoppingCart.list.length : ''"
                   color="cyan lighten-3" overlap>
                   <v-icon medium class="mx-1" color="grey darken-2">mdi-cart</v-icon>

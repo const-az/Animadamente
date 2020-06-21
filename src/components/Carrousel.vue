@@ -5,7 +5,7 @@
       <!-- Search bar -->
       <v-toolbar absolute flat height="300px" width="100%" color="transparent" rounded="xl">
         <v-spacer></v-spacer>
-        <v-text-field :value="search" @input="updateSearch" hide-details color="pink lighten-2" class="px-2 my-3" prepend-icon="mdi-magnify" single-line></v-text-field>
+        <v-text-field data-testId="search-bar" :value="search" @input="updateSearch" hide-details color="pink lighten-2" class="px-2 my-3" prepend-icon="mdi-magnify" single-line></v-text-field>
         <v-spacer></v-spacer>
       </v-toolbar>
 

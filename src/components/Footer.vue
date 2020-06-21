@@ -7,7 +7,7 @@
         </v-btn>
       </v-card-text>
       <v-card-text class="pt-0">
-        <p class="font-weight-medium grey--text text--darken-3">Animadamente.</p><span class="caption mx-2">- {{ new Date().getFullYear() }}</span>
+        <span class="font-weight-medium grey--text text--darken-3">Animadamente.</span><span class="caption mx-2">- {{ new Date().getFullYear() }}</span>
       </v-card-text>
   </v-footer>
 </template>

@@ -21,7 +21,7 @@
         <span class="mb-4">{{ $store.getters.shoppingCart.list!='' ? 'Tus productos:' : 'Carrito vacío.' }}</span>
       </v-card-title>
       <!-- Input to update data -->
-      <v-card-text class="pb-0" v-if="$store.getters.shoppingCart.list!=''">
+      <v-card-text data-testId="shopping-cart-item" class="pb-0" v-if="$store.getters.shoppingCart.list!=''">
         <v-divider class="mb-5"></v-divider>
         <!-- Creates row for every product on cart -->
         <div v-for="item in $store.getters.shoppingCart.list" :key="item.id">

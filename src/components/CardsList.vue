@@ -2,7 +2,7 @@
   <v-row class="mt-8">
     <!-- CARDS LIST FOR HOME PAGE -->
     <!-- Creates cards for every doll -->
-    <v-col cols="12" sm="6" md="4" v-for="item in computedProductList" :key="item.id">
+    <v-col data-testId='product-card' cols="12" sm="6" md="4" v-for="item in computedProductList" :key="item.id">
       <!-- Card -->
       <v-card outlined class="rounded-xl">
         <!-- Product image -->
@@ -32,7 +32,7 @@
           <v-spacer></v-spacer>
         <!-- Add to cart -->
           <span v-if="item.qty!=1" class="text-body-2"><span class="text-caption">Total:</span> $ {{ item.data.price * item.qty }}</span>
-          <v-btn class="ma-2 align-right" outlined large color="cyan lighten-2" icon @click="addToCart(item)">
+          <v-btn data-testId="add-to-cart" class="ma-2 align-right" outlined large color="cyan lighten-2" icon @click="addToCart(item)">
             <v-icon>mdi-cart</v-icon>
           </v-btn>
         </v-card-actions>
