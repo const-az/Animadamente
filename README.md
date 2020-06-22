@@ -28,15 +28,34 @@ npm install
 ```
 
 ---
+NPM commands
 
 * `npm run serve` - hot-reloads for development.
 * `npm run build` - minifies for production.
 
+Firebase commands
+
+* `firebase init` - to initialize firebase on your project.
+* `firebase deploy --only functions` - to connect ending points with cloudfunctions.
+* `firebase deploy --only hosting` - to upload to Firebase hosting.
+
 ---
 
-This proyect was built with Vuetify and Firebase Cloud Functions, Authentication, Database, Storage and Hosting.
+This project was built with Vuetify and Firebase Cloud Functions, Authentication, Database, Storage and Hosting.
  
 You can see it running here: [animadamente-73568.web.app](https://animadamente-73568.web.app "Animadamente web test")
+
+---
+
+## Things to improve
+
+- Better form validation .
+- Image validation.
+- Possibility to create an user.
+- Welcoming page.
+- Sort items.
+
+And all back-end functions, this is only front-end.
 
 ---
 
