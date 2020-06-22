@@ -23,7 +23,7 @@
         </v-badge>
       </v-btn>
       <!-- Dropdown menu -->
-      <v-menu rounded open-on-hover close-on-content-click close-on-click> 
+      <v-menu rounded> 
         <!-- Button activator  -->
         <template v-slot:activator="{ attrs, on }">
           <v-btn data-testId='menu-activator' class="grey--text text--darken-2" icon v-bind="attrs" v-on="on" depressed>
@@ -33,7 +33,7 @@
         <!-- Dropdown list items -->
         <v-list flat elevation="0" data-testId='menu'>
           <!-- Shopping cart on small devices -->
-          <v-list-item  @click="showCart" class="d-md-none">
+          <v-list-item  @click="showCart" class="d-md-none mb-1">
             <v-list-item-title class="pr-5">
               Ver carrito
                 <v-badge data-testId='cart-small-devices' :content="$store.getters.shoppingCart.list.length"

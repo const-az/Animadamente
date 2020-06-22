@@ -13,7 +13,7 @@
     <!-- Login card -->
     <v-card flat width="400" class="text-center mx-auto mt-16 pa-5">
       <v-card-text>
-        <p class="text-h2 mb-2 font-weight-medium cyan--text text--lighten-3">¡Bienvenido!</p>
+        <p class="text-h4 text-md-h2 mb-2 font-weight-medium cyan--text text--lighten-3">¡Bienvenido!</p>
       </v-card-text>
       <!-- Log-in form -->
       <v-card-text>
