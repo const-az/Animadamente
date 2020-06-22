@@ -35,7 +35,7 @@ NPM commands
 
 Firebase commands
 
-* `firebase init` - to initialize firebase on your project.
+* `firebase init` - to initialize Firebase on your project.
 * `firebase deploy --only functions` - to connect ending points with cloudfunctions.
 * `firebase deploy --only hosting` - to upload to Firebase hosting.
 
