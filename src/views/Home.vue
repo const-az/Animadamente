@@ -2,7 +2,7 @@
   <div class="home">
     <v-main>
       <v-container>
-        <carrousel/>
+        <carousel/>
         <cards-list></cards-list>
       </v-container>
     </v-main>
@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import Carrousel from '../components/Carrousel'
+import Carousel from '../components/Carousel'
 import CardsList from '../components/CardsList'
 
 export default {
   name: 'Home',
   components: {
-    Carrousel,
+    Carousel,
     CardsList,
   },
   created(){

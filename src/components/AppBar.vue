@@ -15,7 +15,6 @@
       <v-spacer></v-spacer>
       <!-- Shopping cart -->
       <v-btn class="d-none d-md-block" depressed fab color="white" data-testId='cart' @click="showCart">
-        <!-- Shopping cart icon -->
         <v-badge :content="$store.getters.shoppingCart.list.length"
           :value="$store.getters.shoppingCart.list.length > 0 ? $store.getters.shoppingCart.list.length : ''"
           color="cyan lighten-3" overlap>
@@ -24,7 +23,6 @@
       </v-btn>
       <!-- Dropdown menu -->
       <v-menu rounded> 
-        <!-- Button activator  -->
         <template v-slot:activator="{ attrs, on }">
           <v-btn data-testId='menu-activator' class="grey--text text--darken-2" icon v-bind="attrs" v-on="on" depressed>
             <v-icon>mdi-dots-vertical</v-icon>
@@ -32,7 +30,6 @@
         </template>
         <!-- Dropdown list items -->
         <v-list flat elevation="0" data-testId='menu'>
-          <!-- Shopping cart on small devices -->
           <v-list-item  @click="showCart" class="d-md-none mb-1">
             <v-list-item-title class="pr-5">
               Ver carrito
@@ -43,7 +40,6 @@
                 </v-badge>
             </v-list-item-title>
           </v-list-item>
-          <!-- About -->
           <v-list-item link to="/acerca">
             <v-list-item-title>
               Sobre mí
@@ -60,13 +56,11 @@
           </div>
           <!-- Only if is logged in -->
           <div v-else>
-            <!-- Add products -->
             <v-list-item link to="/agregarproductos">
               <v-list-item-title>
                 Añadir productos
               </v-list-item-title>
             </v-list-item>
-            <!-- Logout -->
             <v-list-item link @click="logout">
                 <v-list-item-title>
                   Cerrar sesión
@@ -92,7 +86,6 @@ export default {
     },
     logout() {
       Firebase.auth().signOut().then( () => {
-        // Clears cart and user when sign out
         this.$store.dispatch('clearCart')
         this.$store.dispatch('updateUser', false)
         if(window.location.pathname != '/'){

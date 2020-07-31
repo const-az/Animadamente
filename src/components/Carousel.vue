@@ -1,20 +1,16 @@
 <template>
   <v-main>
-    <!-- Carrousel -->
-    <v-carousel hide-delimiters cycle height="300" class="rounded-xl justify-center" show-arrows-on-hover>
-      <!-- Logo -->
+    <v-carousel hide-delimiters cycle height="300" class="rounded-xl justify-center" :show-arrows="false">
       <v-toolbar absolute flat height="150px" style="z-index:1" class="mt-8" width="100%" color="transparent" rounded="xl">
         <v-spacer></v-spacer>
         <v-img :src="logo" max-width="250px" style="position: absolute, z-index:1"></v-img>
         <v-spacer></v-spacer>
       </v-toolbar>
-      <!-- Search bar -->
       <v-toolbar absolute flat class="my-15" style="z-index:1" height="150px" width="100%" color="transparent" rounded="xl">
         <v-spacer></v-spacer>
         <v-text-field data-testId="search-bar" style="z-index:1" :value="search" @input="updateSearch" hide-details color="pink lighten-2" class="pt-15 mt-15" prepend-icon="mdi-magnify" single-line></v-text-field>
         <v-spacer></v-spacer>
       </v-toolbar>
-      <!-- Carrousel images -->
       <v-carousel-item v-for="(img, i) in img" :key="i" :src="url+img" gradient="to top, rgba(255,255,255,0), rgba(0,0,0,.2), rgba(255,255,255,0)">
       </v-carousel-item>
     </v-carousel>
