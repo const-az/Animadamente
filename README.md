@@ -2,6 +2,10 @@
 
 Web development of an online shopping site for Animadamente, a hand-made doll design chilean company.
 
+![Home page](readme/home.png)
+![Shopping cart](readme/shopping-cart.png)
+![Upload Products](readme/upload-products.png)
+
 ## Project setup
 
 1. Root folder
